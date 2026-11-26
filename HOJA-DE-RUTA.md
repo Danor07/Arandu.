@@ -1,6 +1,6 @@
 # Hoja de ruta de Arandu
 
-Estado actual de lo que falta para llegar a Arandu: Memory of Dynamic Solutions (antes MSP, memoria de soluciones persistentes; el binario y las órdenes siguen llamándose `msp`). Se tilda al terminar cada entrega (PR fusionado y CI en verde) y se reescribe si cambia el plan.
+Estado actual de lo que falta para llegar a Arandu: Memory of Dynamic Solutions (antes MSP, memoria de soluciones persistentes; las órdenes de uso diario son del binario `arandu`, y `msp` sigue siendo el nombre que usan los hooks). Se tilda al terminar cada entrega (PR fusionado y CI en verde) y se reescribe si cambia el plan.
 
 **Tamaños:** chico, unas horas; mediano, uno o dos días; grande, de tres a cinco días. Son estimaciones del 05/11/2026, no mediciones.
 
@@ -72,7 +72,7 @@ Inspirado en el marco teórico, sin intención de reproducirlo: un camino es un 
 
 ## La interfaz
 
-- [ ] **20. Órdenes cortas y renombre técnico** (mediano). Las órdenes de hoy (`msp --control vigente-consultar --memoria ID --proyecto P --objetivo "…"`) son largas y repiten lo que el programa ya puede saber. El modelo es git: un verbo corto, y la memoria y el proyecto se deducen de la carpeta actual. Va junto con el renombre del binario a `arandu`, porque rompen lo mismo (hooks instalados y guiones) y conviene romperlo una sola vez. Las órdenes largas quedan como alias durante una versión.
+- [ ] **20. Órdenes cortas y renombre técnico** (mediano). *Hechas las órdenes cortas; falta el renombre.* El binario `arandu` acepta verbos al estilo de git (`arandu best "objetivo"`), con el proyecto y la memoria deducidos de la carpeta; la lista está en `codigo/COMANDOS.md`. Falta: que el hook deje la sesión en `ARANDU_SESSION`, forma corta para tareas, episodios y snapshots, y el renombre técnico (órdenes `msp::` dentro del chat, variables `MSP_*`, sobre y nombre del crate), que rompe hooks instalados y conviene hacer de una sola vez.
 - [ ] **21. `arandu show`** (chico el primer paso). Decidir después de usar el proyecto unos días, para saber qué hace falta mirar. Primer paso: un resumen legible en la terminal (proyecto, memoria, objetivos con su solución vigente, mensajes sin leer). Segundo: `arandu show --web`, una página local de sólo lectura, sólo en `127.0.0.1` y con token, donde el historial de los canales se lee como línea de tiempo. Una app de escritorio (Tauri) sólo si hace falta algo nativo, como notificaciones; envolvería la misma página.
 
 ## Pendientes de decidir
