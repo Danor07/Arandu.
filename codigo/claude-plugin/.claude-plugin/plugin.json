@@ -1,7 +1,7 @@
 {
-  "name": "msp",
-  "version": "0.4.0",
-  "description": "Arandu: Memory of Dynamic Solutions. Memorias locales seleccionables por chat: captura los eventos que los hooks exponen y ofrece antecedentes del mismo proyecto. Instalarlo no activa nada.",
+  "name": "arandu",
+  "version": "0.5.0",
+  "description": "Arandu: Memory of Dynamic Solutions. Memorias locales seleccionables por chat: captura los eventos que los hooks exponen y ofrece antecedentes del mismo proyecto. Necesita el binario msp en el PATH. Instalarlo no activa nada.",
   "keywords": [
     "memoria",
     "local",
@@ -10,5 +10,6 @@
   ],
   "author": {
     "name": "Igor Prieto"
-  }
+  },
+  "license": "Apache-2.0"
 }

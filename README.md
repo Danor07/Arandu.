@@ -47,13 +47,16 @@ arandu inbox -s otro-chat             # lee lo pendiente
 
 `arandu` sin argumentos lista todas, y [`codigo/COMANDOS.md`](codigo/COMANDOS.md) las recorre con ejemplos. Las que hablan de un chat necesitan saber cuál: `-s SESION` o la variable `ARANDU_SESSION`.
 
-Con Claude Code, en Windows:
+## Instalarlo en Claude Code
 
-```powershell
-cd codigo
-./claude-plugin/instalar.ps1
-claude --plugin-dir "$PWD\claude-plugin"
+Con el binario ya en el `PATH` (el `cargo install` de arriba), desde un chat:
+
+```text
+/plugin marketplace add Danor07/arandu-publico
+/plugin install arandu@arandu
 ```
+
+Abrí una sesión nueva para que cargue. Instalar no activa nada: cada chat nace apagado.
 
 Dentro del chat, las órdenes empiezan con `msp::` y sólo valen si las tipeás vos:
 
