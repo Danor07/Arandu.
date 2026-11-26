@@ -580,14 +580,13 @@ fn hook(args: &[String]) -> Result<i32> {
 fn corta(args: &[String]) -> Result<i32> {
     // Las opciones comunes pasan tal cual a la orden larga.
     let (mut propios, mut comunes) = (Vec::new(), Vec::new());
-    let mut i = 0;
-    while i < args.len() {
-        if ["--raiz-datos", "--instalacion"].contains(&args[i].as_str()) {
-            comunes.extend(args[i..(i + 2).min(args.len())].iter().cloned());
-            i += 2;
+    let mut resto = args.iter();
+    while let Some(arg) = resto.next() {
+        if ["--raiz-datos", "--instalacion"].contains(&arg.as_str()) {
+            comunes.push(arg.clone());
+            comunes.extend(resto.next().cloned());
         } else {
-            propios.push(args[i].clone());
-            i += 1;
+            propios.push(arg.clone());
         }
     }
     let registry = registry_of(&options(&comunes, 0, &["--raiz-datos", "--instalacion"])?)?;

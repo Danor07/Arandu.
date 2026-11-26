@@ -87,25 +87,21 @@ fn separar(args: &[String], banderas: &[&str], con_valor: &[&str]) -> Result<Ent
         banderas: Vec::new(),
         opciones: Vec::new(),
     };
-    let mut i = 0;
-    while i < args.len() {
-        let a = args[i].as_str();
+    // Con iterador y sin índices: un bucle que avanza a mano puede no terminar.
+    let mut resto = args.iter();
+    while let Some(arg) = resto.next() {
+        let a = arg.as_str();
         if con_valor.contains(&a) {
-            let valor = args
-                .get(i + 1)
-                .with_context(|| format!("{a} needs a value"))?;
+            let valor = resto.next().with_context(|| format!("{a} needs a value"))?;
             ensure!(!e.opciones.iter().any(|(k, _)| k == a), "{a} given twice");
             e.opciones.push((a.to_string(), valor.clone()));
-            i += 2;
         } else if banderas.contains(&a) {
             ensure!(!e.banderas.iter().any(|b| b == a), "{a} given twice");
             e.banderas.push(a.to_string());
-            i += 1;
         } else {
             // Una opción mal escrita no puede pasar por texto: caería a un valor por omisión.
             ensure!(!a.starts_with('-') || a == "-", "unknown option: {a}");
-            e.posicionales.push(args[i].clone());
-            i += 1;
+            e.posicionales.push(arg.clone());
         }
     }
     Ok(e)
