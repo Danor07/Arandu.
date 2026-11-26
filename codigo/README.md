@@ -491,39 +491,42 @@ Los contratos usados se leyeron de la [documentación oficial de hooks](https://
 - `claude plugin validate ./claude-plugin` pasó sin advertencias con 2.1.270.
 - La integración nativa **sí** se ejecutó en una sesión real: ver [Validación nativa](#validación-nativa).
 
-### Instalación local, sin habilitación global
+### Instalación
 
-```powershell
-Set-Location 'C:\Users\user\Documents\Proyectos Codigo\MSP\codigo'
-./claude-plugin/instalar.ps1
-claude --plugin-dir "$PWD\claude-plugin"
+Dos pasos, en cualquier sistema: el binario en el `PATH` y el plugin en Claude Code.
+
+```bash
+cargo install --path codigo --locked     # deja msp y arandu en ~/.cargo/bin
 ```
 
-`instalar.ps1` compila en modo release y copia el binario a `claude-plugin/bin/msp.exe`, la ruta que `hooks/hooks.json` resuelve mediante `${CLAUDE_PLUGIN_ROOT}`. No hay rutas personales en el manifiesto ni en los hooks, no se modifica ninguna configuración global y `claude-plugin/bin/` está fuera de Git. Los hooks usan la **forma exec** (`command` más `args`), así que no interviene ningún shell: no hay problemas de comillas con rutas que contienen espacios ni ventanas auxiliares. En otro sistema operativo hay que copiar el binario a ese mismo nombre o ajustar `hooks.json`; solo se probó Windows.
+Después, desde un chat de Claude Code:
 
-Si se cambia `hooks.json` con Claude Code abierto, hay que reiniciar la sesión (o volver a lanzarla con `--plugin-dir`) para que el host relea el manifiesto.
-
-#### Usarlo en la app de escritorio, no solo en la terminal
-
-`--plugin-dir` es una bandera de **arranque**: aplica solo a la sesión que se lanza con ella. Es lo correcto para la prueba de validación, que pide explícitamente no habilitar nada globalmente.
-
-Para que el plugin esté disponible en todas las sesiones, incluida la app de escritorio, el mecanismo es `enabledPlugins` de `~/.claude/settings.json`, que se maneja con el instalador de plugins. `claude plugin marketplace add` acepta una **ruta local**, así que no hay que publicar nada:
-
-```powershell
-./claude-plugin/instalar.ps1          # el binario debe existir ANTES de instalar
-claude plugin marketplace add "$PWD\claude-plugin"
-claude plugin install msp@msp-local
+```text
+/plugin marketplace add Danor07/arandu-publico
+/plugin install arandu@arandu
 ```
 
-`claude-plugin/.claude-plugin/marketplace.json` es un marketplace de una sola entrada que apunta a esa misma carpeta. Después hace falta una sesión nueva para que el host lo cargue.
+o lo mismo desde la terminal, con `claude plugin marketplace add …` y `claude plugin install arandu@arandu`. Hace falta una sesión nueva para que el host cargue los hooks.
 
-Tres cosas que conviene saber antes de hacerlo:
+El manifiesto del marketplace está en la raíz del repositorio, `.claude-plugin/marketplace.json`, y apunta al plugin en `codigo/claude-plugin`. Los hooks llaman a `msp` por su nombre, en **forma exec** (`command` más `args`): el host lo busca en el `PATH` y lo ejecuta sin shell, así que no hay problemas de comillas ni rutas del plugin que resolver. Por eso el binario se instala aparte: una instalación desde marketplace copia sólo la carpeta del plugin, y un binario compilado no viaja en ella.
 
-- **Instalar copia**, no enlaza. El plugin queda en `~/.claude/plugins/cache/msp-local/msp/<versión>/`, con el binario tal como estaba en ese momento. Si se recompila `msp.exe`, la copia instalada no se entera: hay que volver a instalar o actualizar el plugin. Mientras el proyecto siga cambiando, `--plugin-dir` es más cómodo.
+**Si `msp` no está en el `PATH`, cada hook falla** y Claude Code lo muestra como error del hook; no se captura nada. Se arregla instalando el binario; no hace falta reinstalar el plugin. Al actualizar Arandu hay que repetir el `cargo install`: el plugin y el binario se actualizan por separado.
+
+Para probar sin instalar nada globalmente, cargando el plugin sólo en una sesión:
+
+```bash
+claude --plugin-dir codigo/claude-plugin
+```
+
+En Windows, `./claude-plugin/instalar.ps1` (desde `codigo/`) hace el `cargo install` y además deja una copia en `claude-plugin/bin/msp.exe`, que es la que usa `prueba-manual.ps1`.
+
+Tres cosas que conviene saber:
+
 - **Habilitarlo es global**: los hooks pasan a ejecutarse en todos los chats de esta máquina. Sigue siendo seguro por diseño —cada chat nace apagado y no captura nada hasta que se vincula una memoria explícitamente— pero es una decisión del usuario, no un efecto colateral de instalar.
 - **En claude.ai (web) no funciona.** Los hooks son comandos locales y necesitan esta máquina.
+- **Lo verificado y lo que no.** Con Claude Code 2.1.332 en Linux: `claude plugin validate` aprueba el marketplace y el plugin, y agregar el marketplace e instalar `arandu@arandu` funciona en una configuración aislada. No se probó un chat real con el plugin instalado así, ni en Windows que `msp` sin extensión resuelva a `msp.exe` en la forma exec. La prueba manual anterior se hizo con el binario dentro del plugin, antes de este cambio.
 
-Con `marketplace.json` presente, `claude plugin validate ./claude-plugin` valida el manifiesto **del marketplace**; el del plugin no cambió.
+Quien tenía el plugin instalado como `msp@msp-local` tiene que desinstalarlo e instalar `arandu@arandu`: cambió el nombre del plugin y el del marketplace. El comando del chat pasa de `/msp:memoria` a `/arandu:memoria`; las órdenes `msp::` no cambian.
 
 ### Dónde viven los datos
 
@@ -571,7 +574,7 @@ msp:: apagar
 msp:: predeterminado ID [solo_registro|memoria_activa]  (o: msp:: predeterminado quitar)
 ```
 
-3. **Slash command** `/msp:memoria <orden>`, definido en `claude-plugin/commands/memoria.md` con `disable-model-invocation: true`. Su cuerpo se expande exactamente al texto de la forma 2, de modo que ambas rutas terminan en el mismo hook.
+3. **Slash command** `/arandu:memoria <orden>` (antes `/msp:memoria`), definido en `claude-plugin/commands/memoria.md` con `disable-model-invocation: true`. Su cuerpo se expande exactamente al texto de la forma 2, de modo que ambas rutas terminan en el mismo hook.
 
 Un prompt de control **no se captura** como recuerdo y **no dispara recuperación**: devuelve el resultado como texto y nada más.
 

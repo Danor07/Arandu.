@@ -1,0 +1,17 @@
+{
+  "$schema": "https://code.claude.com/schemas/marketplace.json",
+  "name": "arandu",
+  "description": "Arandu: Memory of Dynamic Solutions. Memoria local para agentes de programación.",
+  "owner": {
+    "name": "Igor Prieto"
+  },
+  "plugins": [
+    {
+      "name": "arandu",
+      "source": "./codigo/claude-plugin",
+      "description": "Memoria local por chat: captura lo que el agente hace y le ofrece la solución que sigue funcionando. Necesita el binario msp en el PATH. Instalarlo no activa ninguna memoria.",
+      "license": "Apache-2.0",
+      "category": "memory"
+    }
+  ]
+}
