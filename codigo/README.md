@@ -1468,9 +1468,12 @@ La regla de competencia de la entrega 6 **sigue contando los dos**: cambiarlo es
 | Corta | Larga |
 |---|---|
 | `init` | `proyecto-registrar --raiz .` |
+| `folder PATH [--main]` | `proyecto-carpeta`, `proyecto-principal --raiz P --carpeta PATH` |
+| `project` | `proyecto-ver --raiz P` |
 | `new NAME` | `memoria-crear --nombre NAME` |
 | `memories` | `memoria-listar` |
 | `use MEMORY [--record]` | `proyecto-predeterminado --raiz . --memoria MEMORY --modo memoria_activa\|solo_registro` |
+| `start` | `sesion-iniciar --sesion S --cwd .` |
 | `status` | `sesion-estado --sesion S --cwd .` |
 | `best GOAL` | `vigente-consultar --memoria M --proyecto P --objetivo GOAL` |
 | `goals` | `objetivos-listar --memoria M --proyecto P` |
@@ -1482,9 +1485,11 @@ La regla de competencia de la entrega 6 **sigue contando los dos**: cambiarlo es
 | `ping` | `canal-latido --sesion S` |
 | `role NAME`, `role --drop` | `rol-tomar --rol NAME`, `rol-soltar` |
 | `pass TEXT` | `rol-pasar --sesion S --texto TEXT` |
+| `define ROLE --gets T --gives T --done T --next ROLE` | `rol-definir --raiz P --rol ROLE --recibe T --entrega T --terminado T --pasa-a ROLE` |
 | `rules` | `proyecto-leer --sesion S` |
+| `rules --set TEXT` | `proyecto-reglas --raiz P --texto TEXT` |
 | `platforms` | `plataformas` |
 
 **Sólo con el nombre `arandu`.** `msp` no reconoce los verbos: su forma histórica `msp BASE import …` toma el primer argumento como archivo de base, y una base llamada `log` o `best` tiene que seguir significando lo mismo. `arandu` y `msp` son el mismo programa (`src/bin/arandu.rs` incluye `main.rs`); los hooks instalados siguen llamando a `msp`.
 
-**Lo que no cambia y lo que falta.** Una opción desconocida se rechaza, igual que en la forma larga; el texto de `best`, `say` y `pass` viaja sin tocar. Los verbos y los mensajes de esta capa están en inglés; las salidas JSON siguen en español. Las órdenes que no tienen forma corta (tareas, episodios, snapshots, corridas, definición de roles y reglas) se usan por `--control`. Falta que el hook le deje la sesión al agente en `ARANDU_SESSION`: hoy hay que pasarla. Y falta el renombre técnico (órdenes `msp::`, variables `MSP_*`, sobre). `tests/cortas.rs` cubre cada verbo, los rechazos, dos propiedades de la traducción y una pasada completa con los dos binarios.
+**Lo que no cambia y lo que falta.** Una opción desconocida se rechaza, igual que en la forma larga; el texto de `best`, `say` y `pass` viaja sin tocar. Los verbos y los mensajes de esta capa están en inglés; las salidas JSON siguen en español. Las órdenes que no tienen forma corta (tareas, episodios, snapshots, corridas) se usan por `--control`. Falta que el hook le deje la sesión al agente en `ARANDU_SESSION`: hoy hay que pasarla. Y falta el renombre técnico (órdenes `msp::`, variables `MSP_*`, sobre). `tests/cortas.rs` cubre cada verbo, los rechazos, dos propiedades de la traducción y una pasada completa con los dos binarios.

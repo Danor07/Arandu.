@@ -26,16 +26,56 @@ fn ok(args: &[&str]) -> String {
 #[test]
 fn cada_verbo_se_traduce_a_su_orden_larga() {
     assert_eq!(ok(&["init"]), "--control proyecto-registrar --raiz /p/sub");
+    // Lo que nombra al proyecto usa su raíz de identidad, no la subcarpeta donde estás.
+    assert_eq!(
+        ok(&["folder", "/otra"]),
+        "--control proyecto-carpeta --raiz /p --carpeta /otra"
+    );
+    assert_eq!(
+        ok(&["folder", "/otra", "--main"]),
+        "--control proyecto-principal --raiz /p --carpeta /otra"
+    );
+    assert_eq!(ok(&["project"]), "--control proyecto-ver --raiz /p");
+    assert_eq!(
+        ok(&["start"]),
+        "--control sesion-iniciar --sesion chat --cwd /p/sub"
+    );
+    assert_eq!(
+        t(&["rules", "--set", "todo pasa por revisión"]).unwrap()[2..],
+        ["--raiz", "/p", "--texto", "todo pasa por revisión"]
+    );
+    assert_eq!(
+        t(&[
+            "define", "guion", "--gets", "la idea", "--gives", "el guion", "--done", "aprobado",
+            "--next", "revisor"
+        ])
+        .unwrap()[1..],
+        [
+            "rol-definir",
+            "--raiz",
+            "/p",
+            "--rol",
+            "guion",
+            "--recibe",
+            "la idea",
+            "--entrega",
+            "el guion",
+            "--terminado",
+            "aprobado",
+            "--pasa-a",
+            "revisor"
+        ]
+    );
     assert_eq!(ok(&["new", "mia"]), "--control memoria-crear --nombre mia");
     assert_eq!(ok(&["memories"]), "--control memoria-listar");
     assert_eq!(ok(&["platforms"]), "--control plataformas");
     assert_eq!(
         ok(&["use", "m2"]),
-        "--control proyecto-predeterminado --raiz /p/sub --memoria m2 --modo memoria_activa"
+        "--control proyecto-predeterminado --raiz /p --memoria m2 --modo memoria_activa"
     );
     assert_eq!(
         ok(&["use", "--record", "m2"]),
-        "--control proyecto-predeterminado --raiz /p/sub --memoria m2 --modo solo_registro"
+        "--control proyecto-predeterminado --raiz /p --memoria m2 --modo solo_registro"
     );
     assert_eq!(
         ok(&["status"]),
@@ -176,6 +216,14 @@ fn lo_mal_escrito_o_incompleto_se_rechaza_con_un_mensaje_que_dice_que_hacer() {
         (vec!["role"], "usage: arandu role NAME | role --drop"),
         (vec!["role", "x", "--drop"], "usage: arandu role --drop"),
         (vec!["confirm"], "usage: arandu confirm N"),
+        (
+            vec!["define", "r", "--gets", "a", "--gives", "b", "--done", "c"],
+            "define needs --next",
+        ),
+        (vec!["define", "--gets", "a"], "usage: arandu define ROLE"),
+        (vec!["folder"], "usage: arandu folder PATH [--main]"),
+        (vec!["rules", "sobra"], "usage: arandu rules [--set TEXT]"),
+        (vec!["rules", "--set"], "--set needs a value"),
         (vec!["commit"], "unknown command: commit"),
         (vec![], "missing command"),
     ] {
@@ -193,9 +241,16 @@ fn lo_mal_escrito_o_incompleto_se_rechaza_con_un_mensaje_que_dice_que_hacer() {
             .map(|v| v.join(" "))
             .map_err(|e| e.to_string())
     };
-    assert!(con(&["best", "x"])
+    assert!(con(&["best", "x"]).unwrap_err().contains("arandu init"));
+    // Con proyecto pero sin memoria predeterminada, el consejo es elegir una.
+    let sin_memoria = Contexto {
+        memoria: None,
+        ..ctx()
+    };
+    let error = traducir(&["goals".to_string()], &sin_memoria)
         .unwrap_err()
-        .contains("arandu use MEMORY"));
+        .to_string();
+    assert!(error.contains("arandu use MEMORY"), "{error}");
     assert!(con(&["best", "x", "-m", "m"])
         .unwrap_err()
         .contains("arandu init"));
@@ -203,6 +258,15 @@ fn lo_mal_escrito_o_incompleto_se_rechaza_con_un_mensaje_que_dice_que_hacer() {
     assert_eq!(
         con(&["init"]).unwrap(),
         "--control proyecto-registrar --raiz /x"
+    );
+    assert!(con(&["project"]).unwrap_err().contains("arandu init"));
+    assert!(con(&["rules", "--set", "x"])
+        .unwrap_err()
+        .contains("arandu init"));
+    // `use` fuera de un proyecto nombra la carpeta actual; el registro decide si existe.
+    assert_eq!(
+        con(&["use", "m"]).unwrap(),
+        "--control proyecto-predeterminado --raiz /x --memoria m --modo memoria_activa"
     );
     assert_eq!(
         con(&["ping", "-s", "z"]).unwrap(),
@@ -231,8 +295,8 @@ proptest! {
     /// opción-valor, y todo texto posicional llega intacto como valor, nunca como opción.
     #[test]
     fn una_traduccion_aceptada_es_siempre_una_orden_larga_bien_formada(
-        verbo in 0usize..19,
-        resto in prop::collection::vec("(--general|--active|--record|--drop|--to|--re|-m|-s|-|--x|[a-zñ ;$\"']{0,8})", 0..5),
+        verbo in 0usize..VERBOS.len(),
+        resto in prop::collection::vec("(--general|--active|--record|--drop|--main|--set|--gets|--gives|--done|--next|--to|--re|-m|-s|-|--x|[a-zñ ;$\"']{0,8})", 0..5),
     ) {
         let mut args = vec![VERBOS[verbo].to_string()];
         args.extend(resto.iter().cloned());
@@ -245,7 +309,10 @@ proptest! {
             }
             // Ninguna opción corta se filtra a la orden larga.
             let claves: Vec<&String> = larga[2..].iter().step_by(2).collect();
-            for corta in ["--general", "--active", "--record", "--drop", "--to", "--re", "-m", "-s"] {
+            for corta in [
+                "--general", "--active", "--record", "--drop", "--main", "--set", "--gets", "--gives",
+                "--done", "--next", "--to", "--re", "-m", "-s",
+            ] {
                 prop_assert!(!claves.iter().any(|c| *c == corta));
             }
         }
@@ -297,7 +364,7 @@ fn arandu_deduce_proyecto_memoria_y_sesion_y_msp_no_cambia() {
     // Fuera de un proyecto, lo que necesita proyecto falla diciendo qué hacer.
     let fuera = a(&proyecto, &["best", "compilar"], None);
     assert!(!fuera.status.success() && fuera.stdout.is_empty());
-    assert!(String::from_utf8_lossy(&fuera.stderr).contains("arandu use MEMORY"));
+    assert!(String::from_utf8_lossy(&fuera.stderr).contains("arandu init"));
 
     json(a(&proyecto, &["init"], None));
     let memoria = json(a(&proyecto, &["new", "mia"], None))["memoria_id"]

@@ -41,9 +41,11 @@ arandu use ID --record       # la deja como predeterminada del proyecto, en solo
 arandu best "compilar el módulo"   # la solución vigente para ese objetivo
 arandu goals                 # todos los tipos de objetivo del proyecto
 arandu blame                 # rastrea el último commit como arreglo de un error
+arandu say "Guion listo" -s mi-chat   # deja un mensaje en el canal del proyecto
+arandu inbox -s otro-chat             # lee lo pendiente
 ```
 
-`arandu` sin argumentos lista todas. Las que hablan de un chat (`status`, `say`, `inbox`, `role`, `pass`, `rules`) necesitan saber cuál: `-s SESION` o la variable `ARANDU_SESSION`. La forma larga (`arandu --control ORDEN --opcion valor`) sigue funcionando y es la referencia completa.
+`arandu` sin argumentos lista todas, y [`codigo/COMANDOS.md`](codigo/COMANDOS.md) las recorre con ejemplos. Las que hablan de un chat necesitan saber cuál: `-s SESION` o la variable `ARANDU_SESSION`.
 
 Con Claude Code, en Windows:
 
@@ -70,7 +72,7 @@ Empezá por `registrar`: junta datos sin cambiar lo que hace el agente.
 
 | Documento | Para qué |
 |---|---|
-| [`codigo/COMANDOS.md`](codigo/COMANDOS.md) | Comandos para probar cada función a mano, con lo que tenés que ver. |
+| [`codigo/COMANDOS.md`](codigo/COMANDOS.md) | Todos los comandos cortos, con ejemplos. |
 | [`codigo/README.md`](codigo/README.md) | Referencia técnica completa: contrato de eventos, esquema, reglas y sus límites. Es largo y está ordenado por entrega. |
 | [`HOJA-DE-RUTA.md`](HOJA-DE-RUTA.md) | Qué está hecho, qué falta y qué queda por decidir. |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Cómo proponer cambios y qué pruebas se piden. |

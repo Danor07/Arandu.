@@ -22,9 +22,12 @@ arandu <command> [arguments]
 Project and memory are taken from the current folder; the session from -s or ARANDU_SESSION.
 
   init                 register this folder as a project
+  folder PATH [--main] add another folder to this project (--main: make it the main one)
+  project              folders, roles and rules version of this project
   new NAME             create a memory
   memories             list memories
   use MEMORY [--record]  make MEMORY this project's default (--record: capture only)
+  start                register this session (hooks do it for you)
   status               state of this session
   best GOAL            the current best solution for a goal
   goals                all goal types of this project
@@ -35,9 +38,11 @@ Project and memory are taken from the current folder; the session from -s or ARA
   inbox [--general]    read pending messages
   log [--general]      channel history
   ping                 mark this session as active
+  define ROLE --gets T --gives T --done T --next ROLE  write a role's procedure
   role NAME | role --drop  take or drop a role
   pass TEXT            hand the work over to the next role
   rules                project rules and this session's role procedure
+  rules --set TEXT     set the project rules
   platforms            supported hosts
 
 Options for any command: -m MEMORY, -s SESSION.
@@ -45,9 +50,12 @@ The long form still works: arandu --control ORDER --option value (see --help).";
 
 pub const VERBOS: &[&str] = &[
     "init",
+    "folder",
+    "project",
     "new",
     "memories",
     "use",
+    "start",
     "status",
     "best",
     "goals",
@@ -59,6 +67,7 @@ pub const VERBOS: &[&str] = &[
     "inbox",
     "log",
     "ping",
+    "define",
     "role",
     "pass",
     "rules",
@@ -130,6 +139,9 @@ pub fn traducir(args: &[String], ctx: &Contexto) -> Result<Vec<String>> {
         "say" => (&["--general", "--active"], &["--to", "--re"]),
         "inbox" | "log" => (&["--general"], &[]),
         "role" => (&["--drop"], &[]),
+        "folder" => (&["--main"], &[]),
+        "rules" => (&[], &["--set"]),
+        "define" => (&[], &["--gets", "--gives", "--done", "--next"]),
         _ => (&[], &[]),
     };
     let e = separar(&args[1..], banderas, &[con_valor, &["-m", "-s"]].concat())?;
@@ -139,6 +151,8 @@ pub fn traducir(args: &[String], ctx: &Contexto) -> Result<Vec<String>> {
             .context("this folder is not inside a registered project: run `arandu init`")
     };
     let memoria = || {
+        // Primero el proyecto: sin él, el consejo útil es `arandu init`, no elegir memoria.
+        proyecto()?;
         e.opcion("-m")
             .map(str::to_string)
             .or(ctx.memoria.clone())
@@ -150,6 +164,8 @@ pub fn traducir(args: &[String], ctx: &Contexto) -> Result<Vec<String>> {
             .or(ctx.sesion.clone())
             .context("no session: pass -s SESSION or set ARANDU_SESSION")
     };
+    // La raíz con la que el registro conoce al proyecto; sin proyecto, la carpeta actual.
+    let raiz = || ctx.proyecto.clone().unwrap_or_else(|| ctx.cwd.clone());
     let canal = || ["proyecto", "general"][usize::from(e.bandera("--general"))].to_string();
     let texto = |n: usize| e.posicionales[n].clone();
     let s = |v: &str| v.to_string();
@@ -158,6 +174,46 @@ pub fn traducir(args: &[String], ctx: &Contexto) -> Result<Vec<String>> {
         "init" => {
             e.exactos(0, "init")?;
             ("proyecto-registrar", vec![("--raiz", ctx.cwd.clone())])
+        }
+        "folder" => {
+            e.exactos(1, "folder PATH [--main]")?;
+            (
+                ["proyecto-carpeta", "proyecto-principal"][usize::from(e.bandera("--main"))],
+                vec![("--raiz", proyecto()?), ("--carpeta", texto(0))],
+            )
+        }
+        "project" => {
+            e.exactos(0, "project")?;
+            ("proyecto-ver", vec![("--raiz", proyecto()?)])
+        }
+        "start" => {
+            e.exactos(0, "start")?;
+            (
+                "sesion-iniciar",
+                vec![("--sesion", sesion()?), ("--cwd", ctx.cwd.clone())],
+            )
+        }
+        "define" => {
+            e.exactos(
+                1,
+                "define ROLE --gets TEXT --gives TEXT --done TEXT --next ROLE",
+            )?;
+            let campo = |corta: &str| {
+                e.opcion(corta)
+                    .map(str::to_string)
+                    .with_context(|| format!("define needs {corta}"))
+            };
+            (
+                "rol-definir",
+                vec![
+                    ("--raiz", proyecto()?),
+                    ("--rol", texto(0)),
+                    ("--recibe", campo("--gets")?),
+                    ("--entrega", campo("--gives")?),
+                    ("--terminado", campo("--done")?),
+                    ("--pasa-a", campo("--next")?),
+                ],
+            )
         }
         "new" => {
             e.exactos(1, "new NAME")?;
@@ -177,7 +233,7 @@ pub fn traducir(args: &[String], ctx: &Contexto) -> Result<Vec<String>> {
             (
                 "proyecto-predeterminado",
                 vec![
-                    ("--raiz", ctx.cwd.clone()),
+                    ("--raiz", raiz()),
                     ("--memoria", texto(0)),
                     ("--modo", s(modo)),
                 ],
@@ -260,12 +316,19 @@ pub fn traducir(args: &[String], ctx: &Contexto) -> Result<Vec<String>> {
                 vec![("--sesion", sesion()?), ("--canal", canal())],
             )
         }
-        "ping" | "rules" => {
-            e.exactos(0, verbo)?;
-            (
-                ["canal-latido", "proyecto-leer"][usize::from(verbo == "rules")],
-                vec![("--sesion", sesion()?)],
-            )
+        "ping" => {
+            e.exactos(0, "ping")?;
+            ("canal-latido", vec![("--sesion", sesion()?)])
+        }
+        "rules" => {
+            e.exactos(0, "rules [--set TEXT]")?;
+            match e.opcion("--set") {
+                Some(texto) => (
+                    "proyecto-reglas",
+                    vec![("--raiz", proyecto()?), ("--texto", s(texto))],
+                ),
+                None => ("proyecto-leer", vec![("--sesion", sesion()?)]),
+            }
         }
         "role" => {
             if e.bandera("--drop") {
