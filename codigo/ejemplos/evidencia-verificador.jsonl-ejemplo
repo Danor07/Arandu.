@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "clave_evento": "handoff/login-oauth/verificacion/1",
+  "grupo_evidencia": "handoff/verificaciones",
+  "secuencia": 1,
+  "origen": "herramienta",
+  "rol": "otro",
+  "timestamp": 1800000000000000,
+  "contenido": "salida completa del verificador, tal como la emitio",
+  "metadatos": {
+    "proyecto": "REEMPLAZAR: la misma raiz normalizada de la tarea",
+    "procedencia": "real",
+    "evaluacion": {
+      "version": 1,
+      "fuente": "verificador_externo",
+      "procedencia": "real",
+      "criterio": "c-tests",
+      "criterio_version": "1",
+      "alcance": "tarea",
+      "objetivo": null,
+      "resultado": 1,
+      "detalle": {
+        "nombre": "suite-integracion",
+        "version": "1",
+        "tarea": "handoff/login-oauth",
+        "entrada": {
+          "comando": "cargo test --test integracion"
+        },
+        "salida": {
+          "cumple": true,
+          "fallidos": 0
+        },
+        "regla": {
+          "campo": "/cumple",
+          "si_true": 1,
+          "si_false": 0
+        },
+        "ejecucion": "real_local"
+      },
+      "nota": "corrida local real del verificador",
+      "anterior": null
+    }
+  }
+}

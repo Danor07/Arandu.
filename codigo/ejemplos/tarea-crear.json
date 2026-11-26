@@ -1,0 +1,27 @@
+{
+  "operacion": "tarea_crear",
+  "tarea": "handoff/login-oauth",
+  "proyecto": "REEMPLAZAR: raiz normalizada que devuelve proyecto-registrar",
+  "definicion": "handoff/login-oauth/def/1",
+  "descripcion": "Arreglar el refresh token de OAuth en el login",
+  "criterios": [
+    {
+      "id": "c-tests",
+      "version": "1",
+      "descripcion": "la suite de integracion pasa completa",
+      "obligatorio": true
+    },
+    {
+      "id": "c-sin-regresion",
+      "version": "1",
+      "descripcion": "el login con password sigue funcionando",
+      "obligatorio": true
+    },
+    {
+      "id": "c-docs",
+      "version": "1",
+      "descripcion": "README documenta el flujo nuevo",
+      "obligatorio": false
+    }
+  ]
+}

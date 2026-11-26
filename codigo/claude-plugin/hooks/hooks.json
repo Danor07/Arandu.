@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "SessionStart": [
+      { "matcher": "*", "hooks": [ { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/bin/msp.exe", "args": ["--hook"], "timeout": 30, "statusMessage": "msp: resolviendo estado del chat" } ] }
+    ],
+    "SessionEnd": [
+      { "matcher": "*", "hooks": [ { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/bin/msp.exe", "args": ["--hook"], "timeout": 30 } ] }
+    ],
+    "UserPromptSubmit": [
+      { "hooks": [ { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/bin/msp.exe", "args": ["--hook"], "timeout": 30, "statusMessage": "msp: revisando antecedentes" } ] }
+    ],
+    "PostToolUse": [
+      { "matcher": "*", "hooks": [ { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/bin/msp.exe", "args": ["--hook"], "timeout": 60 } ] }
+    ],
+    "PostToolUseFailure": [
+      { "matcher": "*", "hooks": [ { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/bin/msp.exe", "args": ["--hook"], "timeout": 60 } ] }
+    ],
+    "Stop": [
+      { "hooks": [ { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/bin/msp.exe", "args": ["--hook"], "timeout": 30 } ] }
+    ],
+    "SubagentStop": [
+      { "matcher": "*", "hooks": [ { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/bin/msp.exe", "args": ["--hook"], "timeout": 30 } ] }
+    ],
+    "PreCompact": [
+      { "matcher": "*", "hooks": [ { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/bin/msp.exe", "args": ["--hook"], "timeout": 30 } ] }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+[package]
+name = "msp"
+version = "0.1.0"
+edition = "2021"
+description = "Arandu: Memory of Dynamic Solutions. Captura local durable de episodios y cola técnica recuperable"
+license = "Apache-2.0"
+
+[dependencies]
+anyhow = "1"
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["float_roundtrip"] }
+sha2 = "0.10"
+
+[dev-dependencies]
+proptest = "1"
+tempfile = "3"

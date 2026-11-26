@@ -1,0 +1,9 @@
+{
+  "operacion": "tarea_marcar",
+  "clave": "handoff/login-oauth/ajuste/1",
+  "tarea": "handoff/login-oauth",
+  "tipo": "ajuste",
+  "detalle": {
+    "que": "se cambio el enfoque de refresh"
+  }
+}

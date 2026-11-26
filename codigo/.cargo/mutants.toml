@@ -1,0 +1,5 @@
+# cargo-mutants sobre todo el paquete msp. scripts/umbral_mutacion.py exige
+# 90 % detectados y rechaza cualquier timeout.
+# Cada copia de compilacion arranca del target/ ya compilado (correr las
+# pruebas una vez antes): ahorra recompilar SQLite bundled en cada mutante.
+copy_target = true

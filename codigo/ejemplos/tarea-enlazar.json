@@ -1,0 +1,6 @@
+{
+  "operacion": "tarea_enlazar",
+  "tarea": "handoff/login-oauth",
+  "evento": "REEMPLAZAR: clave_evento de un evento ya capturado",
+  "evidencia": "el usuario confirma que este evento pertenece a esta tarea; no se dedujo por cercania temporal"
+}

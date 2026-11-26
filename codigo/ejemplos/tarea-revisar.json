@@ -1,0 +1,26 @@
+{
+  "operacion": "tarea_revisar",
+  "tarea": "handoff/login-oauth",
+  "definicion": "handoff/login-oauth/def/2",
+  "descripcion": "Arreglar el refresh token de OAuth y cubrir el caso de token expirado",
+  "criterios": [
+    {
+      "id": "c-tests",
+      "version": "2",
+      "descripcion": "la suite pasa, incluido el caso de token expirado",
+      "obligatorio": true
+    },
+    {
+      "id": "c-sin-regresion",
+      "version": "1",
+      "descripcion": "el login con password sigue funcionando",
+      "obligatorio": true
+    },
+    {
+      "id": "c-docs",
+      "version": "1",
+      "descripcion": "README documenta el flujo nuevo",
+      "obligatorio": false
+    }
+  ]
+}

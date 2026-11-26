@@ -1,0 +1,14 @@
+{
+  "name": "msp",
+  "version": "0.4.0",
+  "description": "Arandu: Memory of Dynamic Solutions. Memorias locales seleccionables por chat: captura los eventos que los hooks exponen y ofrece antecedentes del mismo proyecto. Instalarlo no activa nada.",
+  "keywords": [
+    "memoria",
+    "local",
+    "sqlite",
+    "captura"
+  ],
+  "author": {
+    "name": "Igor Prieto"
+  }
+}

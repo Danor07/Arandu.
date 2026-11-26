@@ -1,0 +1,9 @@
+{
+  "operacion": "tarea_marcar",
+  "clave": "handoff/login-oauth/inicio/1",
+  "tarea": "handoff/login-oauth",
+  "tipo": "inicio",
+  "detalle": {
+    "nota": "arranca la ventana de trabajo"
+  }
+}

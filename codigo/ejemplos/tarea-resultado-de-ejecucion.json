@@ -1,0 +1,9 @@
+{
+  "operacion": "tarea_resultado_de_ejecucion",
+  "clave": "handoff/login-oauth/res/3",
+  "tarea": "handoff/login-oauth",
+  "criterio": "c-sin-regresion",
+  "criterio_version": "1",
+  "evaluacion": "REEMPLAZAR: clave de una evaluacion_ejecucion ya registrada",
+  "anterior": null
+}

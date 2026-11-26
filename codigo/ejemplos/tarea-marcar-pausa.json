@@ -1,0 +1,9 @@
+{
+  "operacion": "tarea_marcar",
+  "clave": "handoff/login-oauth/pausa/1",
+  "tarea": "handoff/login-oauth",
+  "tipo": "pausa",
+  "detalle": {
+    "nota": "se corta el dia"
+  }
+}

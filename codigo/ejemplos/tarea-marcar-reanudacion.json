@@ -1,0 +1,9 @@
+{
+  "operacion": "tarea_marcar",
+  "clave": "handoff/login-oauth/reanudacion/1",
+  "tarea": "handoff/login-oauth",
+  "tipo": "reanudacion",
+  "detalle": {
+    "nota": "se retoma"
+  }
+}

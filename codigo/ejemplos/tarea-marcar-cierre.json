@@ -1,0 +1,9 @@
+{
+  "operacion": "tarea_marcar",
+  "clave": "handoff/login-oauth/cierre/1",
+  "tarea": "handoff/login-oauth",
+  "tipo": "cierre",
+  "detalle": {
+    "nota": "entregado; cerrar no afirma que los criterios pasaron"
+  }
+}

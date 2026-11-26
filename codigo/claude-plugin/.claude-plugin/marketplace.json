@@ -1,0 +1,15 @@
+{
+  "$schema": "https://code.claude.com/schemas/marketplace.json",
+  "name": "msp-local",
+  "description": "Marketplace de una sola entrada, apuntando a esta carpeta. Permite instalar el plugin desde una ruta local, sin publicar nada.",
+  "owner": {
+    "name": "Igor Prieto"
+  },
+  "plugins": [
+    {
+      "name": "msp",
+      "source": "./",
+      "description": "Memorias locales seleccionables por chat. Instalarlo no activa ninguna memoria: cada chat queda apagado hasta que el usuario vincula una explicitamente."
+    }
+  ]
+}

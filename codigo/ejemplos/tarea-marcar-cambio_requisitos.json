@@ -1,0 +1,10 @@
+{
+  "operacion": "tarea_marcar",
+  "clave": "handoff/login-oauth/cambio/1",
+  "tarea": "handoff/login-oauth",
+  "tipo": "cambio_requisitos",
+  "detalle": {
+    "quien": "el responsable del hand-off",
+    "que": "ahora tambien hay que cubrir token expirado"
+  }
+}

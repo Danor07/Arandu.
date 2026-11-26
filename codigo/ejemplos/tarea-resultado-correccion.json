@@ -1,0 +1,11 @@
+{
+  "operacion": "tarea_resultado",
+  "clave": "handoff/login-oauth/res/2",
+  "tarea": "handoff/login-oauth",
+  "criterio": "c-tests",
+  "criterio_version": "1",
+  "evidencia": "handoff/login-oauth/verificacion/2",
+  "alcance": "tarea",
+  "objetivo": null,
+  "anterior": "handoff/login-oauth/res/1"
+}

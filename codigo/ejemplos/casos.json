@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "raiz_trabajo": "REEMPLAZAR: ruta de la copia de trabajo autorizada donde se ejecutan las corridas",
+  "repeticiones": 1,
+  "condiciones": [
+    {
+      "nombre": "sin_recuperacion",
+      "modo": "solo_registro",
+      "snapshot": "snapshots/inicial.sqlite"
+    },
+    {
+      "nombre": "memoria_inicial",
+      "modo": "memoria_activa",
+      "snapshot": "snapshots/inicial.sqlite"
+    },
+    {
+      "nombre": "memoria_acumulada",
+      "modo": "memoria_activa",
+      "snapshot": "snapshots/final.sqlite"
+    }
+  ],
+  "casos": [
+    {
+      "id": "caso-reservado-1",
+      "prompt": "REEMPLAZAR: el prompt exacto del caso, fijado antes de ver resultados",
+      "criterios": [
+        {
+          "id": "c-tests",
+          "version": "1"
+        }
+      ],
+      "estado_inicial_codigo": {
+        "commit": "REEMPLAZAR",
+        "artefacto": null
+      },
+      "configuracion": {
+        "modelo": null,
+        "herramientas": [
+          "Bash",
+          "Edit"
+        ],
+        "nota": "modelo en null: desconocido declarado, no supuesto"
+      },
+      "exposicion_previa": false
+    }
+  ]
+}

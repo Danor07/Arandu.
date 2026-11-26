@@ -1,0 +1,38 @@
+[package]
+name = "msp-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+serde_json = "1"
+tempfile = "3"
+msp = { path = ".." }
+
+# Crate aparte: no forma parte del paquete msp ni de sus pruebas.
+[workspace]
+
+[[bin]]
+name = "captura"
+path = "fuzz_targets/captura.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "consulta"
+path = "fuzz_targets/consulta.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "adaptador"
+path = "fuzz_targets/adaptador.rs"
+test = false
+doc = false
+bench = false
