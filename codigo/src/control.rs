@@ -419,6 +419,20 @@ impl Registry {
         Ok(json!({"raiz_datos":self.root,"memorias":rows.collect::<rusqlite::Result<Vec<_>>>()?}))
     }
 
+    /// Proyecto que contiene a `cwd`: (raíz de identidad, memoria predeterminada). La raíz
+    /// es el nombre del proyecto dentro de las memorias. `None` si la carpeta no está en
+    /// ningún proyecto registrado.
+    pub fn proyecto_en(&self, cwd: &Path) -> Result<Option<(String, Option<String>)>> {
+        let Ok(id) = project_of(&self.conn, &normalize(cwd)?.0) else {
+            return Ok(None);
+        };
+        Ok(Some(self.conn.query_row(
+            "SELECT raiz_normalizada,memoria_predeterminada FROM proyecto_local WHERE id=?1",
+            [id],
+            |r| Ok((r.get(0)?, r.get(1)?)),
+        )?))
+    }
+
     pub fn register_project(&mut self, root: &Path) -> Result<Value> {
         let (key, original) = normalize(root)?;
         let time = now()?;
@@ -1282,7 +1296,7 @@ impl Registry {
     }
 }
 
-fn project_of(tx: &Transaction<'_>, key: &str) -> Result<String> {
+fn project_of(tx: &Connection, key: &str) -> Result<String> {
     // La carpeta más larga que contenga al cwd, de cualquier proyecto: un
     // subdirectorio no elige otro proyecto y el basename nunca participa.
     let mut stmt = tx.prepare(

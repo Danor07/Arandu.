@@ -1456,3 +1456,40 @@ La regla de competencia de la entrega 6 **sigue contando los dos**: cambiarlo es
 3. *El solapamiento de pasos separa sucesión de coexistencia.* Ocho contextos, seis que dependen de los pasos del camino viejo y dos sin dependencias; el nuevo es mejor (0,9 contra 0,8) y atrae por su tasa de éxito observada. Si comparte 3 o 4 de sus 4 pasos con el viejo, lo reemplaza (99 % y 100 % de las corridas). Si comparte 0, 1 o 2, conviven (99,5 %; 99,5 %; 87,5 %): lo adoptan los contextos sin dependencias y los demás se quedan. Ahí una sola vigente para todo el tipo deja mal servido al 25 % de los contextos.
 
 **Límites.** «Ofrecido» es «se preparó un paquete con esa vigente para un pedido de ese chat»; que el host lo haya leído no se acredita. Un paquete preparado más tarde para un pedido viejo puede reclasificar como inducido un éxito anterior. La simulación 3 es sensible a sus supuestos: con una previa más pesimista sobre un camino sin historia, el nuevo no junta pruebas suficientes y no entra, que es el mismo encierro de la simulación 2; y sin generación ciega no entra nunca. Ninguna de las tres usa datos reales. Las constantes (`TRAMO`, `DESUSO_DIVISOR`) son provisionales. `tests/urna.rs` cubre las funciones puras con dos propiedades y las tres simulaciones; `tests/vigentes.rs`, la clasificación independiente/inducido, el seguimiento y el desuso sobre una memoria real.
+
+## Órdenes cortas (binario `arandu`)
+
+`src/cortas.rs` traduce un verbo corto en inglés a la orden larga de `--control` que ya existía. No agrega comportamiento: sólo nombres, y lo que se puede deducir sin preguntarlo.
+
+- **Proyecto:** el que contiene a la carpeta actual (cualquiera de sus carpetas o subcarpetas).
+- **Memoria:** la predeterminada de ese proyecto (`arandu use MEMORIA`), o `-m MEMORIA`.
+- **Sesión:** `-s SESION` o la variable `ARANDU_SESSION`. No se adivina «el último chat»; esa regla del proyecto no cambió.
+
+| Corta | Larga |
+|---|---|
+| `init` | `proyecto-registrar --raiz .` |
+| `folder PATH [--main]` | `proyecto-carpeta`, `proyecto-principal --raiz P --carpeta PATH` |
+| `project` | `proyecto-ver --raiz P` |
+| `new NAME` | `memoria-crear --nombre NAME` |
+| `memories` | `memoria-listar` |
+| `use MEMORY [--record]` | `proyecto-predeterminado --raiz . --memoria MEMORY --modo memoria_activa\|solo_registro` |
+| `start` | `sesion-iniciar --sesion S --cwd .` |
+| `status` | `sesion-estado --sesion S --cwd .` |
+| `best GOAL` | `vigente-consultar --memoria M --proyecto P --objetivo GOAL` |
+| `goals` | `objetivos-listar --memoria M --proyecto P` |
+| `blame [REV]` | `szz-rastrear --memoria M --proyecto P --repo . --arreglo REV` (por omisión `HEAD`) |
+| `links` | `szz-listar --memoria M --proyecto P` |
+| `confirm N`, `discard N` | `szz-confirmar`, `szz-descartar --vinculo N` |
+| `say TEXT [--general] [--active \| --to S2] [--re N]` | `canal-publicar --sesion S --canal proyecto\|general --texto TEXT …` |
+| `inbox [--general]`, `log [--general]` | `canal-leer`, `canal-historial` |
+| `ping` | `canal-latido --sesion S` |
+| `role NAME`, `role --drop` | `rol-tomar --rol NAME`, `rol-soltar` |
+| `pass TEXT` | `rol-pasar --sesion S --texto TEXT` |
+| `define ROLE --gets T --gives T --done T --next ROLE` | `rol-definir --raiz P --rol ROLE --recibe T --entrega T --terminado T --pasa-a ROLE` |
+| `rules` | `proyecto-leer --sesion S` |
+| `rules --set TEXT` | `proyecto-reglas --raiz P --texto TEXT` |
+| `platforms` | `plataformas` |
+
+**Sólo con el nombre `arandu`.** `msp` no reconoce los verbos: su forma histórica `msp BASE import …` toma el primer argumento como archivo de base, y una base llamada `log` o `best` tiene que seguir significando lo mismo. `arandu` y `msp` son el mismo programa (`src/bin/arandu.rs` incluye `main.rs`); los hooks instalados siguen llamando a `msp`.
+
+**Lo que no cambia y lo que falta.** Una opción desconocida se rechaza, igual que en la forma larga; el texto de `best`, `say` y `pass` viaja sin tocar. Los verbos y los mensajes de esta capa están en inglés; las salidas JSON siguen en español. Las órdenes que no tienen forma corta (tareas, episodios, snapshots, corridas) se usan por `--control`. Falta que el hook le deje la sesión al agente en `ARANDU_SESSION`: hoy hay que pasarla. Y falta el renombre técnico (órdenes `msp::`, variables `MSP_*`, sobre). `tests/cortas.rs` cubre cada verbo, los rechazos, dos propiedades de la traducción y una pasada completa con los dos binarios.
