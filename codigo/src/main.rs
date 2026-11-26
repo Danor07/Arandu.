@@ -575,8 +575,61 @@ fn hook(args: &[String]) -> Result<i32> {
     Ok(0)
 }
 
+/// Órdenes cortas: sólo con el binario `arandu`, para que una BASE posicional de `msp`
+/// que se llame igual que un verbo siga significando lo de siempre.
+fn corta(args: &[String]) -> Result<i32> {
+    // Las opciones comunes pasan tal cual a la orden larga.
+    let (mut propios, mut comunes) = (Vec::new(), Vec::new());
+    let mut i = 0;
+    while i < args.len() {
+        if ["--raiz-datos", "--instalacion"].contains(&args[i].as_str()) {
+            comunes.extend(args[i..(i + 2).min(args.len())].iter().cloned());
+            i += 2;
+        } else {
+            propios.push(args[i].clone());
+            i += 1;
+        }
+    }
+    let registry = registry_of(&options(&comunes, 0, &["--raiz-datos", "--instalacion"])?)?;
+    let cwd = std::env::current_dir()?;
+    let (proyecto, memoria) = registry.proyecto_en(&cwd)?.unzip();
+    drop(registry);
+    let ctx = msp::cortas::Contexto {
+        cwd: cwd.to_string_lossy().into_owned(),
+        proyecto,
+        memoria: memoria.flatten(),
+        sesion: std::env::var("ARANDU_SESSION")
+            .ok()
+            .filter(|s| !s.is_empty()),
+    };
+    let mut larga = msp::cortas::traducir(&propios, &ctx)?;
+    larga.extend(comunes);
+    control(&larga)
+}
+
 fn run() -> Result<i32> {
     let args: Vec<String> = std::env::args().skip(1).collect();
+    let arandu = std::env::args()
+        .next()
+        .and_then(|a| {
+            Some(
+                Path::new(&a)
+                    .file_stem()?
+                    .to_str()?
+                    .eq_ignore_ascii_case("arandu"),
+            )
+        })
+        .unwrap_or(false);
+    if arandu {
+        match args.first().map(String::as_str) {
+            None | Some("help") => {
+                println!("{}", msp::cortas::AYUDA);
+                return Ok(0);
+            }
+            Some(verbo) if msp::cortas::VERBOS.contains(&verbo) => return corta(&args),
+            _ => {}
+        }
+    }
     match args.first().map(String::as_str) {
         Some("--control") => return control(&args),
         Some("--hook") => return hook(&args),

@@ -27,7 +27,23 @@ cargo build --release --locked
 cargo test --locked --all-targets
 ```
 
-El binario se llama `msp` (el nombre anterior del proyecto; el renombre técnico está pendiente).
+Se compilan dos binarios del mismo programa: `arandu`, que acepta las órdenes cortas, y `msp`, el nombre anterior, que usan los hooks. Para tenerlos en el `PATH`: `cargo install --path codigo --locked`.
+
+## Órdenes cortas
+
+Como git: un verbo, y el proyecto y la memoria salen de la carpeta donde estás.
+
+```bash
+cd mi-proyecto
+arandu init                  # registra esta carpeta como proyecto
+arandu new mi-memoria        # crea una memoria y muestra su ID
+arandu use ID --record       # la deja como predeterminada del proyecto, en solo registro
+arandu best "compilar el módulo"   # la solución vigente para ese objetivo
+arandu goals                 # todos los tipos de objetivo del proyecto
+arandu blame                 # rastrea el último commit como arreglo de un error
+```
+
+`arandu` sin argumentos lista todas. Las que hablan de un chat (`status`, `say`, `inbox`, `role`, `pass`, `rules`) necesitan saber cuál: `-s SESION` o la variable `ARANDU_SESSION`. La forma larga (`arandu --control ORDEN --opcion valor`) sigue funcionando y es la referencia completa.
 
 Con Claude Code, en Windows:
 

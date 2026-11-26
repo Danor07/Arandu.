@@ -11,6 +11,7 @@ pub mod adapter;
 pub mod canales;
 pub mod competencia;
 pub mod control;
+pub mod cortas;
 pub mod cortes;
 pub mod episodios;
 pub mod episodios_automaticos;

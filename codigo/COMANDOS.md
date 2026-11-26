@@ -6,6 +6,8 @@ Todo se corre desde `codigo/`. `msp` es `target/debug/msp` (en Windows, `target\
 export MSP_RAIZ=/tmp/msp-prueba        # PowerShell: $env:MSP_RAIZ = "$env:TEMP\msp-prueba"
 ```
 
+**Forma corta.** Con el binario `arandu` (mismo programa, `target/debug/arandu`) casi todo lo de abajo se escribe más corto, porque el proyecto y la memoria se deducen de la carpeta: `arandu best "objetivo"` en vez de `msp --control vigente-consultar --memoria ID --proyecto P --objetivo "objetivo"`. `arandu` sin argumentos muestra la lista. Acá se usa la forma larga porque es la que nombra todo explícitamente.
+
 Cada bloque dice **qué tenés que ver**. Los marcados «corrido a mano» los ejecuté tal cual con el binario; los demás están cubiertos por las pruebas automáticas, no por una corrida manual mía.
 
 ## Comprobaciones generales
