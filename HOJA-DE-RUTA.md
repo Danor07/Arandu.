@@ -73,6 +73,7 @@ Inspirado en el marco teórico, sin intención de reproducirlo: un camino es un 
 ## La interfaz
 
 - [ ] **20. Órdenes cortas y renombre técnico** (mediano). Las órdenes de hoy (`msp --control vigente-consultar --memoria ID --proyecto P --objetivo "…"`) son largas y repiten lo que el programa ya puede saber. El modelo es git: un verbo corto, y la memoria y el proyecto se deducen de la carpeta actual. Va junto con el renombre del binario a `arandu`, porque rompen lo mismo (hooks instalados y guiones) y conviene romperlo una sola vez. Las órdenes largas quedan como alias durante una versión.
+- [ ] **21. `arandu show`** (chico el primer paso). Decidir después de usar el proyecto unos días, para saber qué hace falta mirar. Primer paso: un resumen legible en la terminal (proyecto, memoria, objetivos con su solución vigente, mensajes sin leer). Segundo: `arandu show --web`, una página local de sólo lectura, sólo en `127.0.0.1` y con token, donde el historial de los canales se lee como línea de tiempo. Una app de escritorio (Tauri) sólo si hace falta algo nativo, como notificaciones; envolvería la misma página.
 
 ## Pendientes de decidir
 
